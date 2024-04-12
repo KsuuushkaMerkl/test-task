@@ -29,7 +29,7 @@ class PostTDG:
         Get posts by user id
         """
         query = """
-        select Post { * } filter .user.id = <uuid>$user_id
+        select Post { *, user: {id, username} } filter .user.id = <uuid>$user_id
         """
         return await self.database.query(query, user_id=user_id)
 
@@ -39,7 +39,7 @@ class PostTDG:
         """
         query = """
         insert Post {
-            user_id := <uuid>$user_id,
+            user := (select detached User {*} filter .id = <uuid>$user_id),
             text := <str>$text
         }
         """
@@ -54,7 +54,7 @@ class PostTDG:
         query = """
         with 
             text := <optional str>$text
-        select (update Post filter .id = <uuid>$post_id set {text := text ?? .text}) { * }
+        select (update Post filter .id = <uuid>$post_id set {text := text ?? .text}) { *, user: {id,username} }
         """
 
         try:

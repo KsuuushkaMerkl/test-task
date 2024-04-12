@@ -30,11 +30,11 @@ async def get_posts_by_user_id(
     return await PostTDG().get_by_user_id(user_id)
 
 
-@router.post("/", response_model=Post)
+@router.post("/")
 async def create_post(
-        post: Annotated[PostCreateRequestSchema, Depends()],
+        post: PostCreateRequestSchema,
         user: JwtAuthorizationCredentials = Security(access_security)
-) -> Post:
+):
     """
     Create new post
     """
@@ -49,7 +49,7 @@ async def create_post(
 @router.patch("/{post_id}", response_model=Post)
 async def update_post(
         post_id: uuid.UUID,
-        post: Annotated[PostUpdateRequestSchema, Depends()],
+        post: PostUpdateRequestSchema,
         user: JwtAuthorizationCredentials = Security(access_security)  # noqa
 ) -> Post:
     """

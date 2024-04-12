@@ -1,13 +1,33 @@
 version: "3.7"
+
 services:
   db:
-
-
+    container_name: "edgedb"
+    image: edgedb/edgedb
+    restart: unless-stopped
+    environment:
+      EDGEDB_SERVER_SECURITY: insecure_dev_mode
+      EDGEDB_SERVER_ADMIN_UI: enabled
+      EDGEDB_SERVER_PASSWORD: edgedb
+      EDGEDB_SERVER_TLS_CERT_FILE: /certificates/cert.crt
+      EDGEDB_SERVER_TLS_KEY_FILE: /certificates/cert.key
+    volumes:
+      - ./dbschema:/dbschema
+      - ./certificates:/certificates
+      - db:/var/lib/edgedb/data
+    ports:
+      - "5656:5656"
 
   app:
     build: .
-    env_file:
-      - .env
-    container_name: fastapi_app
+    restart: unless-stopped
+    container_name: "fastapi_app"
+    volumes:
+      - .:/messenger_app
+    depends_on:
+      - db
     ports:
-      - 8000:8000
+      - "8000:8000"
+
+volumes:
+  db:

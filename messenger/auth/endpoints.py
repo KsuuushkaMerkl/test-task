@@ -12,7 +12,7 @@ router = APIRouter()
 
 @router.post("/register")
 async def register(
-        user: Annotated[UserRegisterLoginRequestSchema, Depends()]
+        user: UserRegisterLoginRequestSchema
 ):
     """
     Register user
@@ -27,7 +27,7 @@ async def register(
 
 @router.post("/login", response_model=UserLoginResponseSchema)
 async def login(
-        login_data: Annotated[UserRegisterLoginRequestSchema, Depends()]
+        login_data: UserRegisterLoginRequestSchema
 ) -> UserLoginResponseSchema:
     """
     Login user
